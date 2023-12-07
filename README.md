@@ -38,8 +38,8 @@ The downloaded sequence is called '33' and has subfolders cluster_list and img_t
 Test on EndoMapper frames:
 
 ```
-cd Domain-Gap-Reduction-Endoscopy
-python src/test.py --data_root /path/to/data
+cd Domain-Gap-Reduction-Endoscopy/src
+python test.py --data_root /path/to/data
 ```
 
 
