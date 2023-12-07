@@ -6,9 +6,17 @@ Anita Rau, Binod Bhattarai, Lourdes Agapito, Danail Stoyanov
 
 [DEMI](https://demi-workshop.github.io) Workshop @ MICCAI 2023
 
+## Getting Started
+
+```
+cd Domain-Gap-Reduction-Endoscopy
+mkdir outputs
+mkdir saved_models
+```
+
 ## Pretrained Models
 
-Download our pretrained model [here](https://drive.google.com/file/d/1DaUv-tZrijQimam1AF36gFvmTg6Vtxnz/view?usp=share_link) to ```saved_models``` folder.
+Download our pretrained model [here](https://drive.google.com/file/d/1DaUv-tZrijQimam1AF36gFvmTg6Vtxnz/view?usp=share_link) and save it to ```saved_models``` folder.
 
 ## EndoMapper Data Setup
 
