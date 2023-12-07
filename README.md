@@ -39,7 +39,7 @@ Test on EndoMapper frames:
 
 ```
 cd Domain-Gap-Reduction-Endoscopy
-python test.py --data_root /path/to/data
+python src/test.py --data_root /path/to/data
 ```
 
 
