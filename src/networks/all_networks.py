@@ -1,12 +1,8 @@
 """
-Task-guided Domain Gap Reduction for Monocular Depth Prediction in Endoscopy.
+This repo is largely based on the code base of "SharinGAN: Combining Synthetic and Real Data for Unsupervised GeometryEstimation"
+(https://github.com/koutilya-pnvr/SharinGAN) and heavily borrows from "EndoSLAM" (https://github.com/CapsuleEndoscope/EndoSLAM).
 
-This repo is largely based on the code bases of "SharinGAN: Combining Synthetic and Real Data for Unsupervised GeometryEstimation"
-(https://github.com/koutilya-pnvr/SharinGAN) and "EndoSLAM" (https://github.com/CapsuleEndoscope/EndoSLAM)
-
-This software is licensed under the terms of a CC BY public copyright license.
-
-Anita Rau, a.rau.16@ucl.ac.uk, 2023
+Edited by Anita Rau, a.rau.16@ucl.ac.uk, 2023
 """
 
 import torch
@@ -735,3 +731,20 @@ class DispResNet(nn.Module):
             return outputs
         else:
             return outputs[0]
+        
+
+class PoseResNet(nn.Module):
+
+    def __init__(self, num_layers = 18, pretrained = True, SAB=False):
+        super(PoseResNet, self).__init__()
+        self.encoder = ResnetEncoder2(num_layers = num_layers, pretrained = pretrained, num_input_images=2)  # TODO this was ResnetEncoder !!!
+        self.decoder = PoseDecoder(self.encoder.num_ch_enc)
+
+    def init_weights(self):
+        pass
+
+    def forward(self, img1, img2):
+        x = torch.cat([img1, img2], 1)
+        features = self.encoder(x)
+        pose = self.decoder([features])
+        return pose

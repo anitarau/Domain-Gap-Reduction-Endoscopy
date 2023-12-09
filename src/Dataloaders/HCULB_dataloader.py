@@ -1,10 +1,23 @@
+"""
+This repo is largely based on the code base of "SharinGAN: Combining Synthetic and Real Data for Unsupervised GeometryEstimation"
+(https://github.com/koutilya-pnvr/SharinGAN) and heavily borrows from "EndoSLAM" (https://github.com/CapsuleEndoscope/EndoSLAM).
+
+Edited by Anita Rau, a.rau.16@ucl.ac.uk, 2023
+"""
+
+
 import torch.utils.data as data
 import numpy as np
 from path import Path
 import random
 from PIL import Image
+from PIL import ImageFilter
 from torchvision import transforms
 from scipy.spatial.transform import Rotation as R
+import torchvision.transforms.functional as TF
+import torch
+import cv2
+
 
 def load_as_float(path):
     return Image.open(path)
@@ -17,16 +30,15 @@ class Hculb(data.Dataset):
         random.seed(seed)
         self.custom_transform = custom_transform
         self.k = skip_frames
-        self.data_root = data_root
         self.frames_apart = frames_apart
         self.train = train
+        self.data_root = data_root
         self.gap = gap
         self.offset = offset
         self.depth = depth
         self.norm = norm
         self.shifts = shifts
         self.pairs = pairs
-        self.vid_ids = vid_ids
         self.newK = np.array([[ 58.30109866849495,0.,139.57619298432274],[0.,58.32320920632603, 135.1197128002675],[0,0,1]]) #undistorted intrinsics
 
         self.crawl_folders(sequence_length)
@@ -57,17 +69,21 @@ class Hculb(data.Dataset):
 
 
     def crawl_folders(self, sequence_length):
+        # k skip frames
         sequence_set = []
         demi_length = (sequence_length - 1) // 2
+
         imgs = []
+        col_vid = 33 
         if self.train:
-            seqs = [2, 3, 7, 8, 9, 10] 
+            seqs = [2, 3, 7, 9, 10, 8]
         else:
             seqs = [4, 5, 6, 15, 21]
-        
         num_ims = 0
-        for col_vid in self.vid_ids:
-            for seq in seqs: 
+        patient= [33]
+
+        for col_vid in patient:
+            for seq in seqs:
                 imgs = []
                 for i, scene in enumerate(open(self.data_root+str(col_vid)+'/cluster_list/' + str(seq) + '.txt','r')):
                     if i % 1 == 0:
@@ -82,7 +98,7 @@ class Hculb(data.Dataset):
                 for i in range(self.offset + demi_length * self.k + self.frames_apart - 1,
                                len(imgs) - demi_length * self.k - self.frames_apart + 1,
                                self.gap):
-                    sample = {'intrinsics': intrinsics, 'tgt': imgs[i], 'ref_imgs': []} 
+                    sample = {'intrinsics': intrinsics, 'tgt': imgs[i], 'ref_imgs': []}
                     for j in self.shifts:
                         sample['ref_imgs'].append(imgs[i + j * self.frames_apart])
                     sequence_set.append(sample)
@@ -93,12 +109,15 @@ class Hculb(data.Dataset):
                         sample = {'intrinsics': intrinsics, 'tgt': imgs[i], 'ref_imgs': []}
                         for j in self.shifts:
                             sample['ref_imgs'].append(imgs[i + j * (self.frames_apart + 1)])
+
                         sequence_set.append(sample)
 
                         sample = {'intrinsics': intrinsics, 'tgt': imgs[i], 'ref_imgs': []}
                         for j in self.shifts:
                             sample['ref_imgs'].append(imgs[i + j * (self.frames_apart - 1)])
+
                         sequence_set.append(sample)
+
 
         self.samples = sequence_set
 
@@ -118,6 +137,7 @@ class Hculb(data.Dataset):
             tgt_img = self.to_tensor(np.array(tgt_img))[:3, :, :]
             if self.pairs:
                 ref_imgs = [self.to_tensor(np.array(ref_img))[:3, :, :] for ref_img in ref_imgs]
+
 
 
         if self.train:

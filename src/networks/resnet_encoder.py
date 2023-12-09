@@ -5,14 +5,10 @@
 # available in the LICENSE file.
 
 """
-Task-guided Domain Gap Reduction for Monocular Depth Prediction in Endoscopy.
+This repo is largely based on the code base of "SharinGAN: Combining Synthetic and Real Data for Unsupervised GeometryEstimation"
+(https://github.com/koutilya-pnvr/SharinGAN) and heavily borrows from "EndoSLAM" (https://github.com/CapsuleEndoscope/EndoSLAM).
 
-This repo is largely based on the code bases of "SharinGAN: Combining Synthetic and Real Data for Unsupervised GeometryEstimation"
-(https://github.com/koutilya-pnvr/SharinGAN) and "EndoSLAM" (https://github.com/CapsuleEndoscope/EndoSLAM)
-
-This software is licensed under the terms of a CC BY public copyright license.
-
-Anita Rau, a.rau.16@ucl.ac.uk, 2023
+Edited by Anita Rau, a.rau.16@ucl.ac.uk, 2023
 """
 
 import numpy as np

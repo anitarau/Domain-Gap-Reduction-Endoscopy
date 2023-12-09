@@ -1,12 +1,8 @@
 """
-Task-guided Domain Gap Reduction for Monocular Depth Prediction in Endoscopy.
+This repo is largely based on the code base of "SharinGAN: Combining Synthetic and Real Data for Unsupervised GeometryEstimation"
+(https://github.com/koutilya-pnvr/SharinGAN) and heavily borrows from "EndoSLAM" (https://github.com/CapsuleEndoscope/EndoSLAM).
 
-This repo is largely based on the code bases of "SharinGAN: Combining Synthetic and Real Data for Unsupervised GeometryEstimation"
-(https://github.com/koutilya-pnvr/SharinGAN) and "EndoSLAM" (https://github.com/CapsuleEndoscope/EndoSLAM)
-
-This software is licensed under the terms of a CC BY public copyright license.
-
-Anita Rau, a.rau.16@ucl.ac.uk, 2023
+Edited by Anita Rau, a.rau.16@ucl.ac.uk, 2023
 """
 
 import os
@@ -18,7 +14,7 @@ from torch.utils.data import DataLoader
 from torchvision import transforms as tr
 from networks import all_networks
 import matplotlib.pyplot as plt
-from Dataloaders.HCULB_dataloader_test import Hculb as real_dataset
+from Dataloaders.HCULB_dataloader import Hculb as real_dataset
 
 
 class Solver():
@@ -52,7 +48,8 @@ class Solver():
       
 
     def test(self):
-        model_state = torch.load('./trained_models/DepthModel.pth.tar')
+        print('Loading the trained model from {}'.format(self.opt.model_path))
+        model_state = torch.load(self.opt.model_path)
 
         self.netT.load_state_dict(model_state['netT_state_dict'])
         self.netG.load_state_dict(model_state['netG_state_dict'])
@@ -94,6 +91,7 @@ def get_params():
     parser.add_argument('--output_path', default='outputs/')
     parser.add_argument('--test_seq', type=list, default=[33])
     parser.add_argument('--data_root')
+    parser.add_argument('--model_path', default='trained_models/DepthModel.pth.tar')
     opt = parser.parse_args()
     return opt
 
